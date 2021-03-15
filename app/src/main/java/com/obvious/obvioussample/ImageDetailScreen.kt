@@ -1,50 +1,51 @@
 package com.obvious.obvioussample
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.obvious.obvioussample.databinding.ImageDetailsScreenLayoutBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
 class ImageDetailScreen : AppCompatActivity() {
-    private var imageData: Image? = null
+    private lateinit var appViewPagerAdapter: AppViewPagerAdapter
+    private lateinit var imageData: Image
     private var toolbar: Toolbar? = null
+    private lateinit var listImages: ArrayList<Image>
+    private lateinit var viewPager2: ViewPager2
 
-    //    private lateinit var imageView: ImageView
-    lateinit var binding: ImageDetailsScreenLayoutBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.image_details_screen_layout)
-//        setContentView(R.layout.image_details_screen_layout)
+        setContentView(R.layout.image_details_screen_layout)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val requestOptions = RequestOptions()
-//        requestOptions.placeholder(R.drawable.place_holder1)
-        requestOptions.override(800,480)
-        requestOptions.error(android.R.drawable.stat_notify_error)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        appViewPagerAdapter = AppViewPagerAdapter()
+        viewPager2 = findViewById(R.id.viewpager)
+        viewPager2.adapter = appViewPagerAdapter
         if (intent.hasExtra("imageData")!!) {
-            imageData = intent.getParcelableExtra<Image>("imageData")
-            Glide.with(this)
-                .setDefaultRequestOptions(requestOptions)
-                .load(imageData?.hdurl)
-                .into(binding.imageDesc)
-            binding.imageData = imageData
-        } else {
-            imageData = Image("", "", "", "", "", "", "", "")
-            Glide.with(this)
-                .setDefaultRequestOptions(requestOptions)
-                .load(R.drawable.place_holder)
-                .into(binding.imageDesc)
-            binding.imageData = imageData
+            imageData = intent.getParcelableExtra<Image>("imageData")!!
+            listImages = intent.getBundleExtra("bundle")?.getParcelableArrayList("imageDataList")!!
+            appViewPagerAdapter.loadData(listImages)
         }
 
+        if (imageData != null) {
+            listImages.forEachIndexed { idx, image ->
+                run() {
+                    if (image.equals(imageData)) {
+                        viewPager2.post {
+                            viewPager2.setCurrentItem(idx, true)
+                        }
 
-//        imageView = findViewById<ImageView>(R.id.imageDesc)
+                    }
+                }
+            }
+        }
 
     }
 }

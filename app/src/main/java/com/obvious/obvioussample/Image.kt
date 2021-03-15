@@ -18,4 +18,14 @@ data class Image(
     val service_version: String?,
     val title: String?,
     val url: String?
-) : Parcelable
+) : Parcelable {
+    override fun equals(other: Any?): Boolean {
+        var it = other as Image
+        if (this.title.equals(it?.title) && this.url.equals(it?.url) && this.hdurl.equals(it?.hdurl) && this.copyright.equals(
+                it?.copyright
+            )
+        )
+            return true
+        else return false
+    }
+}

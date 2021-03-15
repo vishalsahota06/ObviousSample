@@ -11,18 +11,20 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.obvious.obvioussample.R
 import kotlinx.android.synthetic.main.image_grid_item_1.*
+import java.util.*
 
 public class MainActivity : AppCompatActivity(), MainActivityListener {
-    private var toolbar: Toolbar?=null
+    private var toolbar: Toolbar? = null
     private lateinit var activityViewModel: MainActivityViewModel
     val recyclerView by lazy { findViewById<RecyclerView>(R.id.gridView) }
-    var gridAdapter: ImageViewAdapter ?=null
+    var gridAdapter: ImageViewAdapter? = null
+    lateinit var imageList: ArrayList<Image>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        toolbar =findViewById(R.id.toolbar)
-        toolbar?.title="Obvious"
+        toolbar = findViewById(R.id.toolbar)
+        toolbar?.title = "Obvious"
         setSupportActionBar(toolbar)
         activityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         activityViewModel.readDataFromFile()
@@ -40,15 +42,19 @@ public class MainActivity : AppCompatActivity(), MainActivityListener {
     }
 
     val imageListObserver = Observer<List<Image>> {
+        imageList= (it as ArrayList<Image>?)!!
         gridAdapter?.setImages(it)
         it.forEachIndexed { idx, image -> Log.i(TAG, "> Item $idx:\n$image") }
 
     }
 
     override fun onClickItem(image: Image) {
-        Log.i(TAG, "onClickItem: "+image)
-        var intent= Intent(this,ImageDetailScreen::class.java)
-        intent.putExtra("imageData",image)
+        Log.i(TAG, "onClickItem: " + image)
+        var intent = Intent(this, ImageDetailScreen::class.java)
+        intent.putExtra("imageData", image)
+        var bundle=Bundle()
+        bundle.putParcelableArrayList("imageDataList",imageList)
+        intent.putExtra("bundle",bundle)
         startActivity(intent)
     }
 }

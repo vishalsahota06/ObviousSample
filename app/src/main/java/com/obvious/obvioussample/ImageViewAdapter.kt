@@ -31,15 +31,19 @@ class ImageViewAdapter(val activityListener: MainActivityListener) : RecyclerVie
     }
 
     override fun getItemCount(): Int {
-        return listImages?.size ?: 0
+        return listImages?.size ?: 10
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var value=listImages?.get(position) ?: null;
         val requestOptions = RequestOptions()
-        requestOptions.placeholder(android.R.drawable.ic_input_delete)
-        requestOptions.override(800, 400)
-        requestOptions.error(android.R.drawable.ic_input_delete)
+        requestOptions.placeholder(R.drawable.place_holder2)
+        requestOptions.override(400, 300)
+        requestOptions.error(R.drawable.place_holder1)
         Glide.with(context)
             .setDefaultRequestOptions(requestOptions)
             .load(listImages?.get(position)?.url)
