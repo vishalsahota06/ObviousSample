@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 
-class ImageViewAdapter : RecyclerView.Adapter<ImageViewAdapter.ViewHolder>() {
+class ImageViewAdapter(val activityListener: MainActivityListener) : RecyclerView.Adapter<ImageViewAdapter.ViewHolder>() {
     private lateinit var view: View
     var listImages: List<Image>? = null
     lateinit var context: Context
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView:ImageView
@@ -43,6 +43,9 @@ class ImageViewAdapter : RecyclerView.Adapter<ImageViewAdapter.ViewHolder>() {
             .setDefaultRequestOptions(requestOptions)
             .load(listImages?.get(position)?.url)
             .into(holder.imageView)
+        holder.imageView.setOnClickListener {
+            listImages?.get(position)?.let { it1 -> activityListener.onClickItem(it1) }
+        }
     }
 
     fun setImages(it: List<Image>?) {
